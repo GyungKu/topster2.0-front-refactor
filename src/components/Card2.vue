@@ -17,45 +17,32 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, defineOptions, defineProps } from 'vue';
 import AlbumDetail from "@/components/AlbumDetail.vue"; // AlbumDetail 컴포넌트 추가
 import axios from "axios";
 import ImageCard from "@/components/ImageCard.vue";
 
-export default {
-  name: "Card2",
-  components: {ImageCard, AlbumDetail }, // AlbumDetail 컴포넌트 등록
-  props: {
-    topster: Object,
-  },
-  data() {
-    return {
-      isModalOpen: false,
-      albums: null,
-    };
-  },
-  computed: {
-    reversAlbums() {
-      return (this.topster.albums || []).slice().reverse();
-    }
-  },
-  methods: {
-    handleCardClicked(id) {
-      // API 호출로 앨범 정보 가져오기
-      axios.get(`/albums/${id}`)
+defineOptions ({ name: "Card2" });
+
+const topster = defineProps({topster: Object}).topster;
+const isModalOpen = ref(false);
+const albums = ref([]);
+
+const reversAlbums = computed(() => (topster.albums || []).slice().reverse());
+
+const handleCardClicked = (id) => {
+  axios.get(`/albums/${id}`)
       .then(response => {
-        this.albums = response.data;
-        this.isModalOpen = true; // 모달 열기
+        albums.value = response.data;
+        isModalOpen.value = true; // 모달 열기
       })
       .catch(error => {
         console.error("앨범 정보를 불러오는 중 오류 발생:", error);
-      });
-    },
-    closeModal() {
-      this.isModalOpen = false; // 모달 닫기
-    },
-  },
-};
+      })
+    };
+
+const closeModal = () => isModalOpen.value = false; // 모달 닫기
 </script>
 
 <style scoped>
