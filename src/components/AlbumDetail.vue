@@ -13,20 +13,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    album: Object, // 부모로부터 받은 앨범 정보
-  },
-  methods: {
-    closeModal() {
-      // 부모에게 모달 닫기 이벤트 전달
-      this.$emit("close-modal");
-    },
-  },
-  mounted() {
-  }
-};
+<script setup>
+import { defineProps, defineEmits } from "vue";
+
+const props = defineProps<{
+  album: Object
+}>();
+const emit = defineEmits['close-modal'];
+const closeModal = () => emit('close-modal');
+
 </script>
 
 <style scoped>
