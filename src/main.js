@@ -11,7 +11,7 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 router.beforeEach((to, from, next) => {
 
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = JSON.parse(localStorage.getItem("accessToken"));
 
   // access token이 존재하고, 유효기간이 지나지 않았다면 이동
   if (accessToken && Date.now() < accessToken.expire) {
