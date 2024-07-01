@@ -16,9 +16,7 @@
 <script setup>
 import { defineProps, defineEmits } from "vue";
 
-const props = defineProps<{
-  album: Object
-}>();
+const album = defineProps({album: Object}).album;
 const emit = defineEmits['close-modal'];
 const closeModal = () => emit('close-modal');
 
