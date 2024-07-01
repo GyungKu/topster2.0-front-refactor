@@ -1,0 +1,30 @@
+FROM node:20 as builder
+
+# root directory에 파일이 안 담기게 하기 위해 설정
+WORKDIR /app
+
+# package.json 이름을 가진 파일을 도커의 . 경로에 저장한다(복사)
+COPY package.json ./
+
+# npm install은 package.json에 있는 종속성을 설치해준다.
+RUN npm install
+
+# 모든 파일을 도커의 ./ 경로에 저장한다, npm install 보다 위에 있으면 코드가 바뀔 때 마다 npm install으로 종속성을 새로 받기 때문에 아래 둔다.
+COPY . .
+
+# 환경 변수 설정 후build 해준다
+ARG VUE_APP_KAKAO_REDIRECT_URL=https://www.topster2.site/kakaojoin
+ARG VUE_APP_KAKAO_CLIENT_ID=b859f62f2c55ad0ef2958b9df52df9c2
+
+RUN npm run build
+
+# nginx
+FROM nginx
+# 포트 매핑
+EXPOSE 3000
+
+# 컨테이너 안에 conf 파일을 만든 conf 파일로 덮어쓴다.
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# 위에 as로 설정한 FROM의 이름의 /app/dist(build하면 생김) 경로에 있는 것을 nginx의 /usr/share/nginx/html 경로에 복사한다(기본 nginx 실행경로)
+COPY --from=builder /app/dist /usr/share/nginx/html
