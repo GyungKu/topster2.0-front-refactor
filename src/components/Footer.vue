@@ -1,5 +1,3 @@
-<!-- Footer.vue -->
-
 <template>
   <footer>
     <div class="github-icons">
@@ -20,6 +18,7 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'CustomFooter' });
 const githubProfiles = [
   {
     url: 'https://github.com/GyungKu/topster2.0',

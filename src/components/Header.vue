@@ -15,7 +15,7 @@
                 <router-link
                   :to="{ name: 'login' }"
                   class="text-white"
-                  v-if="!$store.state.token"
+                  v-if="!store.state.token"
                   >로그인</router-link
                 >
                 <a href="#" class="text-white" @click="logout()" v-else
@@ -26,7 +26,7 @@
                 <router-link
                   :to="{ name: 'signup' }"
                   class="text-white"
-                  v-if="!$store.state.token"
+                  v-if="!store.state.token"
                   >회원가입</router-link
                 >
               </li>
@@ -39,7 +39,7 @@
                 <router-link
                   :to="{ name: 'topsterRegister' }"
                   class="text-white"
-                  v-if="$store.state.token"
+                  v-if="store.state.token"
                   >탑스터 등록</router-link
                 >
               </li>
@@ -56,7 +56,7 @@
             </ul>
           </div>
 
-          <div class="col-sm-4 py-4" v-if="$store.state.token">
+          <div class="col-sm-4 py-4" v-if="store.state.token">
             <ul class="list-unstyled">
               <li>
                 <router-link :to="{ name: 'mypage' }" class="text-white"
@@ -123,15 +123,14 @@
 </template>
 
 <script setup>
-import { defineOptions, computed } from 'vue';
-import useRoute from 'vue-router';
+import { useStore } from 'vuex';
 
-defineOptions({ name: 'Header' });
+defineOptions({ name: 'CustomHeader' });
 
-const route = useRoute();
+const store = useStore();
 
 const logout = () => {
-  route.dispatch('logout');
+  store.dispatch('logout');
   window.location.reload();
 };
 </script>
