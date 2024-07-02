@@ -28,12 +28,12 @@
 </template>
 
 <script setup>
-import { ref, computed, defineOptions, defineProps } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
 import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
 import ImageCard from '@/components/ImageCard.vue';
 
-defineOptions({ name: 'Card2' });
+defineOptions({ name: 'ImageCard2' });
 
 const { topster } = defineProps({ topster: Object });
 const isModalOpen = ref(false);
