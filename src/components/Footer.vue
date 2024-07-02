@@ -3,9 +3,14 @@
 <template>
   <footer>
     <div class="github-icons">
-      <a v-for="(profile, index) in githubProfiles" :key="index" :href="profile.url" target="_blank">
+      <a
+        v-for="(profile, index) in githubProfiles"
+        :key="index"
+        :href="profile.url"
+        target="_blank"
+      >
         <div class="github-icon-container">
-          <img :src="profile.image" :alt="profile.alt" class="github-icon">
+          <img :src="profile.image" :alt="profile.alt" class="github-icon" />
           <p class="github-username">{{ profile.username }}</p>
         </div>
       </a>
@@ -14,17 +19,21 @@
   </footer>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      githubProfiles: [
-        { url: 'https://github.com/GyungKu/topster2.0', image: 'https://cdn-icons-png.flaticon.com/256/25/25231.png', alt: 'GitHub Profile 1', username: 'Backend' },
-        { url: 'https://github.com/GyungKu/topster-front', image: 'https://cdn-icons-png.flaticon.com/256/25/25231.png', alt: 'GitHub Profile 2', username: 'Frontend' }
-      ]
-    };
+<script setup>
+const githubProfiles = [
+  {
+    url: 'https://github.com/GyungKu/topster2.0',
+    image: 'https://cdn-icons-png.flaticon.com/256/25/25231.png',
+    alt: 'GitHub Profile 1',
+    username: 'Backend',
+  },
+  {
+    url: 'https://github.com/GyungKu/topster-front',
+    image: 'https://cdn-icons-png.flaticon.com/256/25/25231.png',
+    alt: 'GitHub Profile 2',
+    username: 'Frontend',
   }
-};
+];
 </script>
 
 <style scoped>
