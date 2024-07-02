@@ -2,25 +2,25 @@
   <form @submit.prevent="submitComment" class="comment-form">
     <label for="newComment" class="form-label">댓글 작성:</label>
     <div class="form-input-container">
-      <textarea v-model="newComment" id="newComment" class="form-textarea" required></textarea>
+      <textarea
+        v-model="newComment"
+        id="newComment"
+        class="form-textarea"
+        required
+      ></textarea>
       <button type="submit" class="form-button">댓글 작성</button>
     </div>
   </form>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      newComment: "",
-    };
-  },
-  methods: {
-    submitComment() {
-      this.$emit("submit-comment", this.newComment);
-      this.newComment = ""; // 작성한 댓글 초기화
-    },
-  },
+<script setup>
+import {defineEmits} from 'vue'
+
+const emit = defineEmits(['submit-comment']);
+const newComment = ref('');
+const submitComment = () => {
+  emit('submit-comment', newComment.value);
+  newComment.value = '';
 };
 </script>
 
@@ -53,7 +53,7 @@ export default {
 }
 
 .form-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 10px;
   border: none;
