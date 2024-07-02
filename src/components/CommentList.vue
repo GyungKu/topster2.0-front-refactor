@@ -45,14 +45,14 @@
 </template>
 
 <script setup>
-import {defineProps, defineEmit, computed} from 'vue';
+import {defineProps, defineEmit} from 'vue';
 import axios from 'axios';
-import store from '@/scripts/store';
+import { useStore } from 'vuex';
 
 const props = defineProps({comments: []});
 const comments = props.comments;
 const emit = defineEmit(['editComment', 'deleteComment']);
-const store = computed(() => store);
+const store = useStore();
 
 const padZero = (value) => {
   return value < 10 ? `0${value}` : value;
