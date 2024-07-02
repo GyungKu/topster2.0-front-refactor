@@ -3,71 +3,88 @@
     <ul>
       <li v-for="comment in comments" :key="comment.id" class="comment-item">
         <div v-if="!comment.isEditing">
-          {{ comment.content }} - 작성자: {{ comment.author }} - 작성일: {{ formatDate(comment.createdAt) }}
+          {{ comment.content }} - 작성자: {{ comment.author }} - 작성일:
+          {{ formatDate(comment.createdAt) }}
         </div>
         <div v-if="comment.isEditing" class="editing-comment">
           <textarea v-model="comment.content" class="form-control"></textarea>
           <div class="comment-buttons">
-            <button @click="editComment(comment)" class="btn btn-success btn-sm">저장</button>
-            <button @click="comment.isEditing = false" class="btn btn-secondary btn-sm">취소</button>
+            <button
+              @click="editComment(comment)"
+              class="btn btn-success btn-sm"
+            >
+              저장
+            </button>
+            <button
+              @click="comment.isEditing = false"
+              class="btn btn-secondary btn-sm"
+            >
+              취소
+            </button>
           </div>
         </div>
         <div v-if="!comment.isEditing" class="comment-buttons">
-          <button v-if="store.state.token" @click="toggleEdit(comment)" class="btn btn-primary btn-sm">수정</button>
-          <button v-if="store.state.token" @click="deleteComment(comment.id)" class="btn btn-danger btn-sm">삭제</button>
+          <button
+            v-if="store.state.token"
+            @click="toggleEdit(comment)"
+            class="btn btn-primary btn-sm"
+          >
+            수정
+          </button>
+          <button
+            v-if="store.state.token"
+            @click="deleteComment(comment.id)"
+            class="btn btn-danger btn-sm"
+          >
+            삭제
+          </button>
         </div>
       </li>
     </ul>
   </div>
 </template>
 
-<script>
-import store from "@/scripts/store";
-import axios from "axios";
+<script setup>
+import {defineProps, defineEmit, computed} from 'vue';
+import axios from 'axios';
+import store from '@/scripts/store';
 
-export default {
-  computed: {
-    store() {
-      return store
-    }
-  },
-  props: {
-    comments: Array,
-  },
-  methods: {
-    formatDate(createdAt) {
-      const date = new Date(createdAt);
-      const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
-      return formattedDate;
-    },
+const props = defineProps({comments: []});
+const comments = props.comments;
+const emit = defineEmit(['editComment', 'deleteComment']);
+const store = computed(() => store);
 
-    toggleEdit(comment) {
-      axios.get(`/comments/${comment.id}/isAuthor`)
-      .then(() => {
-        comment.isEditing = true;
-      }).catch(() => {
-        alert('본인의 댓글이 아닙니다.');
-      })
-    },
-
-    cancelEdit(comment) {
-      comment.isEditing = false;
-    },
-
-    editComment(comment) {
-      this.$emit("editComment", comment);
-    },
-
-    deleteComment(id) {
-      this.$emit("deleteComment", id);
-    }
-
-  },
+const padZero = (value) => {
+  return value < 10 ? `0${value}` : value;
 };
 
-function padZero(value) {
-  return value < 10 ? `0${value}` : value;
+const formatDate = (createdAt) => {
+  const date = new Date(createdAt)
+  const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`
+  return formattedDate
 }
+
+const toggleEdit = (comment) => {
+  axios.get(`/comments/${comment.id}/isAuthor`)
+  .then(() => {
+    comment.isEditing = true
+  })
+  .catch(() => {
+    alert('본인의 댓글이 아닙니다.')
+  })
+};
+
+const cancelEdit = (comment) => {
+  comment.isEditing = false;
+};
+
+const editComment = (comment) => {
+  emit('editComment', comment);
+};
+
+const deleteComment = (id) => {
+  emit('deleteComment', id);
+};
 </script>
 
 <style scoped>
