@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router';
 import useStore from 'vuex';
+import ref, { onMounted } from 'vue';
 
 const route = useRoute();
 const router = useRouter();

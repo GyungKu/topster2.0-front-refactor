@@ -5,15 +5,13 @@
 </template>
 
 <script setup>
-import { defineProps, defineOptions } from 'vue';
-
 const props = defineProps({
   album: {},
   albumImage: String,
 });
 const { album } = props;
 const { albumImage } = props;
-const emit = defineEmit(['card-clicked']);
+const emit = defineEmits(['card-clicked']);
 
 const handleCardClick = () => {
   emit('card-clicked', album);
