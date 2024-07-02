@@ -124,7 +124,7 @@
 
 <script setup>
 import { defineOptions, computed } from 'vue';
-import useRoute from 'vuex';
+import useRoute from 'vue-router';
 
 defineOptions({ name: 'Header' });
 
