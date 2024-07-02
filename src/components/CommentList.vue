@@ -15,10 +15,7 @@
             >
               저장
             </button>
-            <button
-              @click="comment.isEditing = false"
-              class="btn btn-secondary btn-sm"
-            >
+            <button @click="cancelEdit" class="btn btn-secondary btn-sm">
               취소
             </button>
           </div>
@@ -45,14 +42,15 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmit } from 'vue';
+import { ref } from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 
 const props = defineProps({ comments: [] });
 const { comments } = props;
-const emit = defineEmit(['editComment', 'deleteComment']);
+const emit = defineEmits(['editComment', 'deleteComment']);
 const store = useStore();
+const isEditing = ref(false);
 
 const padZero = (value) => {
   return value < 10 ? `0${value}` : value;
@@ -68,15 +66,16 @@ const toggleEdit = (comment) => {
   axios
     .get(`/comments/${comment.id}/isAuthor`)
     .then(() => {
-      comment.isEditing = true;
+      isEditing.value = true;
     })
     .catch(() => {
+      isEditing.value = false;
       alert('본인의 댓글이 아닙니다.');
     });
 };
 
-const cancelEdit = (comment) => {
-  comment.isEditing = false;
+const cancelEdit = () => {
+  isEditing.value = false;
 };
 
 const editComment = (comment) => {
