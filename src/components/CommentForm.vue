@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
+import { ref } from 'vue';
 
 const emit = defineEmits(['submit-comment']);
 const newComment = ref('');
