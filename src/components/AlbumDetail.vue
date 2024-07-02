@@ -16,11 +16,11 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 
-const props = defineProps({ album: {} })
-const album = props
-const emit = defineEmits(['close-modal'])
-const closeModal = () => emit('close-modal')
-console.log(album.image)
+const props = defineProps({ album: {} });
+const album = props;
+const emit = defineEmits(['close-modal']);
+const closeModal = () => emit('close-modal');
+console.log(album.image);
 </script>
 
 <style scoped>

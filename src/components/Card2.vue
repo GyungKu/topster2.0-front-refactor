@@ -35,11 +35,11 @@ import ImageCard from '@/components/ImageCard.vue'
 
 defineOptions({ name: 'Card2' })
 
-const { topster } = defineProps({ topster: Object })
-const isModalOpen = ref(false)
-const albums = ref([])
+const { topster } = defineProps({ topster: Object });
+const isModalOpen = ref(false);
+const albums = ref([]);
 
-const reversAlbums = computed(() => (topster.albums || []).slice().reverse())
+const reversAlbums = computed(() => (topster.albums || []).slice().reverse());
 
 const handleCardClicked = (id) => {
   axios
@@ -51,11 +51,11 @@ const handleCardClicked = (id) => {
     .catch((error) => {
       console.error('앨범 정보를 불러오는 중 오류 발생:', error)
     })
-}
+};
 
 const closeModal = () => {
   isModalOpen.value = false // 모달 닫기
-}
+};
 </script>
 
 <style scoped>
