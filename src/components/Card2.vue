@@ -2,10 +2,20 @@
   <div class="card shadow-sm">
     <div class="image-container">
       <!-- TopsterCard 컴포넌트를 사용하여 이미지 표시 -->
-      <ImageCard v-for="(album, idx) in reversAlbums" :key="idx" :albumImage="album.image" :id="album.id" class="img"
-                   @card-clicked="handleCardClicked"/>
+      <ImageCard
+        v-for="(album, idx) in reversAlbums"
+        :key="idx"
+        :albumImage="album.image"
+        :id="album.id"
+        class="img"
+        @card-clicked="handleCardClicked"
+      />
       <!-- 9개의 빈 아이템을 추가 -->
-      <div v-for="index in Math.max(9 - topster.albums.length, 0)" :key="`empty-${index}`" class="item empty"></div>
+      <div
+        v-for="index in Math.max(9 - topster.albums.length, 0)"
+        :key="`empty-${index}`"
+        class="item empty"
+      ></div>
     </div>
     <div class="card-body">
       <p class="card-text">{{ topster.title }}</p>
@@ -18,31 +28,34 @@
 </template>
 
 <script setup>
-import { ref, computed, defineOptions, defineProps } from 'vue';
-import AlbumDetail from "@/components/AlbumDetail.vue"; // AlbumDetail 컴포넌트 추가
-import axios from "axios";
-import ImageCard from "@/components/ImageCard.vue";
+import { ref, computed, defineOptions, defineProps } from 'vue'
+import axios from 'axios'
+import AlbumDetail from '@/components/AlbumDetail.vue' // AlbumDetail 컴포넌트 추가
+import ImageCard from '@/components/ImageCard.vue'
 
-defineOptions ({ name: "Card2" });
+defineOptions({ name: 'Card2' })
 
-const topster = defineProps({topster: Object}).topster;
-const isModalOpen = ref(false);
-const albums = ref([]);
+const { topster } = defineProps({ topster: Object })
+const isModalOpen = ref(false)
+const albums = ref([])
 
-const reversAlbums = computed(() => (topster.albums || []).slice().reverse());
+const reversAlbums = computed(() => (topster.albums || []).slice().reverse())
 
 const handleCardClicked = (id) => {
-  axios.get(`/albums/${id}`)
-      .then(response => {
-        albums.value = response.data;
-        isModalOpen.value = true; // 모달 열기
-      })
-      .catch(error => {
-        console.error("앨범 정보를 불러오는 중 오류 발생:", error);
-      })
-    };
+  axios
+    .get(`/albums/${id}`)
+    .then((response) => {
+      albums.value = response.data
+      isModalOpen.value = true // 모달 열기
+    })
+    .catch((error) => {
+      console.error('앨범 정보를 불러오는 중 오류 발생:', error)
+    })
+}
 
-const closeModal = () => isModalOpen.value = false; // 모달 닫기
+const closeModal = () => {
+  isModalOpen.value = false // 모달 닫기
+}
 </script>
 
 <style scoped>
