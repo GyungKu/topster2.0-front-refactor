@@ -3,7 +3,7 @@
     <!-- 모달 내용 및 닫기 버튼 등을 추가 -->
     <div class="modal-content" v-if="album">
       <!-- 앨범 상세 정보를 표시하는 내용 -->
-      <img :src="album.image" class="img">
+      <img :src="album.image" class="img" />
       <h2>{{ album.title }}</h2>
       <!-- 다른 앨범 정보 표시 -->
       <p>가수 {{ album.artist }}</p>
@@ -14,12 +14,13 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits } from 'vue'
 
-const album = defineProps({album: Object}).album;
-const emit = defineEmits['close-modal'];
-const closeModal = () => emit('close-modal');
-
+const props = defineProps({ album: {} })
+const album = props
+const emit = defineEmits(['close-modal'])
+const closeModal = () => emit('close-modal')
+console.log(album.image)
 </script>
 
 <style scoped>
