@@ -9,15 +9,13 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'airbnb-base',
     'plugin:prettier/recommended',
+    'prettier',
   ],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: [
-    'vue',
-    'prettier',
-  ],
+  plugins: ['vue', 'prettier'],
   rules: {
     'prettier/prettier': 'error',
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -26,9 +24,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       alias: {
-        map: [
-          ['@', './src'],
-        ],
+        map: [['@', './src']],
         extensions: ['.js', '.vue', '.json'],
       },
     },
