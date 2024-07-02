@@ -4,19 +4,21 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    album: Object,
-    albumImage: String
-  },
-  methods: {
-    handleCardClick() {
-      // 부모 컴포넌트에 클릭 이벤트를 전달
-      this.$emit("card-clicked", this.album);
-    },
-  }
+<script setup>
+import {defineProps, defineOptions} from 'vue';
+
+const props = defineProps({
+  album: {},
+  albumImage: String
+});
+const album = props.album;
+const albumImage = props.albumImage;
+const emit = defineEmit(['card-clicked']);
+
+const handleCardClick = () => {
+  emit('card-clicked', album);
 };
+
 </script>
 
 <style scoped>
