@@ -28,12 +28,12 @@
 </template>
 
 <script setup>
-import { ref, computed, defineOptions, defineProps } from 'vue'
-import axios from 'axios'
-import AlbumDetail from '@/components/AlbumDetail.vue' // AlbumDetail 컴포넌트 추가
-import ImageCard from '@/components/ImageCard.vue'
+import { ref, computed, defineOptions, defineProps } from 'vue';
+import axios from 'axios';
+import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
+import ImageCard from '@/components/ImageCard.vue';
 
-defineOptions({ name: 'Card2' })
+defineOptions({ name: 'Card2' });
 
 const { topster } = defineProps({ topster: Object });
 const isModalOpen = ref(false);
@@ -45,16 +45,16 @@ const handleCardClicked = (id) => {
   axios
     .get(`/albums/${id}`)
     .then((response) => {
-      albums.value = response.data
-      isModalOpen.value = true // 모달 열기
+      albums.value = response.data;
+      isModalOpen.value = true; // 모달 열기
     })
     .catch((error) => {
-      console.error('앨범 정보를 불러오는 중 오류 발생:', error)
-    })
+      console.error('앨범 정보를 불러오는 중 오류 발생:', error);
+    });
 };
 
 const closeModal = () => {
-  isModalOpen.value = false // 모달 닫기
+  isModalOpen.value = false; // 모달 닫기
 };
 </script>
 

@@ -123,17 +123,17 @@
 </template>
 
 <script setup>
-import {defineOptions, computed} from 'vue';
+import { defineOptions, computed } from 'vue';
 import useRoute from 'vuex';
 
-defineOptions({ name: "Header" });
+defineOptions({ name: 'Header' });
 
 const route = useRoute();
 
 const logout = () => {
   route.dispatch('logout');
   window.location.reload();
-}
+};
 </script>
 <style scoped>
 .text-white {

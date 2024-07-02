@@ -5,20 +5,19 @@
 </template>
 
 <script setup>
-import {defineProps, defineOptions} from 'vue';
+import { defineProps, defineOptions } from 'vue';
 
 const props = defineProps({
   album: {},
-  albumImage: String
+  albumImage: String,
 });
-const album = props.album;
-const albumImage = props.albumImage;
+const { album } = props;
+const { albumImage } = props;
 const emit = defineEmit(['card-clicked']);
 
 const handleCardClick = () => {
   emit('card-clicked', album);
 };
-
 </script>
 
 <style scoped>

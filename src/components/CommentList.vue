@@ -45,12 +45,12 @@
 </template>
 
 <script setup>
-import {defineProps, defineEmit} from 'vue';
+import { defineProps, defineEmit } from 'vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
 
-const props = defineProps({comments: []});
-const comments = props.comments;
+const props = defineProps({ comments: [] });
+const { comments } = props;
 const emit = defineEmit(['editComment', 'deleteComment']);
 const store = useStore();
 
@@ -59,19 +59,20 @@ const padZero = (value) => {
 };
 
 const formatDate = (createdAt) => {
-  const date = new Date(createdAt)
-  const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`
-  return formattedDate
-}
+  const date = new Date(createdAt);
+  const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+  return formattedDate;
+};
 
 const toggleEdit = (comment) => {
-  axios.get(`/comments/${comment.id}/isAuthor`)
-  .then(() => {
-    comment.isEditing = true
-  })
-  .catch(() => {
-    alert('본인의 댓글이 아닙니다.')
-  })
+  axios
+    .get(`/comments/${comment.id}/isAuthor`)
+    .then(() => {
+      comment.isEditing = true;
+    })
+    .catch(() => {
+      alert('본인의 댓글이 아닙니다.');
+    });
 };
 
 const cancelEdit = (comment) => {

@@ -32,7 +32,7 @@ const githubProfiles = [
     image: 'https://cdn-icons-png.flaticon.com/256/25/25231.png',
     alt: 'GitHub Profile 2',
     username: 'Frontend',
-  }
+  },
 ];
 </script>
 
