@@ -1,49 +1,49 @@
 <template>
   <div class="pagination">
-    <button @click="prevPage" :disabled="page === 1">이전</button>
+    <button @click="prevPage" :disabled="props.page === 1">이전</button>
     <span v-for="pageNumber in totalPageArray" :key="pageNumber">
-      <button :disabled="page === pageNumber" @click="gotoPage(pageNumber)" :class="{ active: pageNumber === page }">{{ pageNumber }}</button>
+      <button
+        :disabled="props.page === pageNumber"
+        @click="gotoPage(pageNumber)"
+        :class="{ active: pageNumber === props.page }"
+      >
+        {{ pageNumber }}
+      </button>
     </span>
-    <button @click="nextPage" :disabled="page === totalPages">다음</button>
+    <button @click="nextPage" :disabled="props.page === props.totalPages">
+      다음
+    </button>
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    page: {
-      type: Number,
-      required: true,
-    },
-    totalPages: {
-      type: Number,
-      required: true,
-    },
-  },
-  computed: {
-    // 계산된 속성을 통해 페이지 숫자 배열 생성
-    totalPageArray() {
-      return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-    },
-  },
-  methods: {
-    prevPage() {
-      if (this.page > 1) {
-        this.$emit('pageChange', this.page - 1);
-      }
-    },
-    nextPage() {
-      if (this.page < this.totalPages) {
-        this.$emit('pageChange', this.page + 1);
-      }
-    },
-    gotoPage(pageNumber) {
-      this.$emit('pageChange', pageNumber);
-    },
-  },
-};
-</script>
+<script setup>
+import { computed } from 'vue';
 
+defineOptions({ name: 'CustomPagenation ' });
+
+const props = defineProps({ page: Number, totalPages: Number });
+const emit = defineEmits(['pageChange']);
+
+const prevPage = () => {
+  if (props.page > 1) {
+    emit('pageChange', props.page - 1);
+  }
+};
+
+const nextPage = () => {
+  if (props.page < props.totalPages) {
+    emit('pageChange', props.page + 1);
+  }
+};
+
+const gotoPage = (pageNumber) => {
+  emit('pageChange', pageNumber);
+};
+
+const totalPageArray = computed(() => {
+  return Array.from({ length: props.totalPages }, (_, index) => index + 1);
+});
+</script>
 
 <style scoped>
 .pagination {

@@ -1,10 +1,10 @@
 <template>
   <div class="post-content">
-    <h2>{{ post.title }}</h2>
-    <p>{{ post.content }}</p>
+    <h2>{{ props.post.title }}</h2>
+    <p>{{ props.post.content }}</p>
     <div class="meta-info">
-      <p>작성자: {{ post.author }}</p>
-      <p>작성일: {{ formatDate(post.createdAt) }}</p>
+      <p>작성자: {{ props.post.author }}</p>
+      <p>작성일: {{ formatDate(props.post.createdAt) }}</p>
     </div>
     <div class="buttons" v-if="store.state.token !== null">
       <!-- 수정 버튼 -->
@@ -15,44 +15,47 @@
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import router from "@/scripts/router";
-import store from "@/scripts/store";
+<script setup>
+import axios from 'axios';
+import router from '@/scripts/router';
+import { useStore } from 'vuex';
 
-export default {
-  computed: {
-    store() {
-      return store
-    }
-  },
-  props: {
-    post: Object,
-  },
-  methods: {
-    formatDate(dateTimeString) {
-      const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-      return new Date(dateTimeString).toLocaleDateString(undefined, options);
-    },
+const props = defineProps({ post: {} });
+const store = useStore();
 
-    deletePost() {
-      axios.delete(`/posts/${this.post.id}`).then((res) => {
-        alert(res.data.message);
-        router.push({name: "board"});
-      }).catch((err) => {
-        alert(err.response.data.message);
-      })
-    },
+const formatDate = (dateTimeString) => {
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+  return new Date(dateTimeString).toLocaleDateString(undefined, options);
+};
 
-    editPost() {
-      axios.get(`/posts/${this.post.id}/isAuthor`).then(() => {
-        router.push({name: 'postEdit', params: {postId: this.post.id}});
-      }).catch((err) => {
-        alert(err.response.data.message);
-      })
-    }
+const deletePost = () => {
+  axios
+    .delete(`/posts/${post.value.id}`)
+    .then((res) => {
+      alert(res.data.message);
+      router.push({ name: 'board' });
+    })
+    .catch((err) => {
+      alert(err.response.data.message);
+    });
+};
 
-  },
+const editPost = () => {
+  axios
+    .get(`/posts/${post.value.id}/isAuthor`)
+    .then(() => {
+      router.push({ name: 'postEdit', params: { postId: post.value.id } });
+    })
+    .catch((err) => {
+      alert(err.response.data.message);
+    });
 };
 </script>
 
