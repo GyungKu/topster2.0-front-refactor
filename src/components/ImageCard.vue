@@ -1,6 +1,6 @@
 <template>
   <div class="topster-card" @click="handleCardClick">
-    <img :src="albumImage" alt="Item Image" class="item-img" />
+    <img :src="props.albumImage" alt="Item Image" class="item-img" />
   </div>
 </template>
 
@@ -9,12 +9,10 @@ const props = defineProps({
   album: {},
   albumImage: String,
 });
-const { album } = props;
-const { albumImage } = props;
 const emit = defineEmits(['card-clicked']);
 
 const handleCardClick = () => {
-  emit('card-clicked', album);
+  emit('card-clicked', props.album);
 };
 </script>
 

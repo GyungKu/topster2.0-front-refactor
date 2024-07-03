@@ -37,7 +37,7 @@ const formatDate = (dateTimeString) => {
 
 const deletePost = () => {
   axios
-    .delete(`/posts/${post.value.id}`)
+    .delete(`/posts/${props.post.id}`)
     .then((res) => {
       alert(res.data.message);
       router.push({ name: 'board' });
@@ -49,9 +49,9 @@ const deletePost = () => {
 
 const editPost = () => {
   axios
-    .get(`/posts/${post.value.id}/isAuthor`)
+    .get(`/posts/${props.id}/isAuthor`)
     .then(() => {
-      router.push({ name: 'postEdit', params: { postId: post.value.id } });
+      router.push({ name: 'postEdit', params: { postId: props.post.id } });
     })
     .catch((err) => {
       alert(err.response.data.message);

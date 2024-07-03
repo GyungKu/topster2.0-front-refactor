@@ -1,7 +1,11 @@
 <template>
   <div class="comment-list">
     <ul>
-      <li v-for="comment in comments" :key="comment.id" class="comment-item">
+      <li
+        v-for="comment in props.comments"
+        :key="comment.id"
+        class="comment-item"
+      >
         <div v-if="!comment.isEditing">
           {{ comment.content }} - 작성자: {{ comment.author }} - 작성일:
           {{ formatDate(comment.createdAt) }}
@@ -20,7 +24,7 @@
             </button>
           </div>
         </div>
-        <div v-if="!comment.isEditing" class="comment-buttons">
+        <div v-if="comment.isEditing" class="comment-buttons">
           <button
             v-if="store.state.token"
             @click="toggleEdit(comment)"
@@ -47,7 +51,6 @@ import axios from 'axios';
 import { useStore } from 'vuex';
 
 const props = defineProps({ comments: [] });
-const { comments } = props;
 const emit = defineEmits(['editComment', 'deleteComment']);
 const store = useStore();
 const isEditing = ref(false);

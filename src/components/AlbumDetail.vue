@@ -1,13 +1,13 @@
 <template>
   <div class="album-detail">
     <!-- 모달 내용 및 닫기 버튼 등을 추가 -->
-    <div class="modal-content" v-if="album">
+    <div class="modal-content" v-if="props.album">
       <!-- 앨범 상세 정보를 표시하는 내용 -->
-      <img :src="album.image" class="img" />
-      <h2>{{ album.title }}</h2>
+      <img :src="props.album.image" class="img" />
+      <h2>{{ props.album.title }}</h2>
       <!-- 다른 앨범 정보 표시 -->
-      <p>가수 {{ album.artist }}</p>
-      <p>발매일 {{ album.releaseDate }}</p>
+      <p>가수 {{ props.album.artist }}</p>
+      <p>발매일 {{ props.album.releaseDate }}</p>
       <button @click="closeModal">닫기</button>
     </div>
   </div>
@@ -15,7 +15,6 @@
 
 <script setup>
 const props = defineProps({ album: {} });
-const { album } = props;
 const emit = defineEmits(['close-modal']);
 const closeModal = () => emit('close-modal');
 </script>
