@@ -62,7 +62,7 @@ const closeSearchModal = () => {
 };
 
 const handleItemSelected = (item) => {
-  if (this.selectedItems.length === 9) {
+  if (selectedItems.value.length === 9) {
     alert('더이상 추가할 수 없습니다.');
     return;
   }
