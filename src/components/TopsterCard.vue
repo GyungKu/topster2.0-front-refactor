@@ -44,7 +44,7 @@
               삭제
             </button>
           </div>
-          <div v-if="likes != null">
+          <div v-if="likes !== null">
             <button
               v-if="likes.status === false"
               @click="likeTopster"
@@ -77,7 +77,7 @@ import axios from 'axios';
 import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
 import ImageCard from '@/components/ImageCard.vue';
 import router from '@/scripts/router';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -133,19 +133,11 @@ const reloadLike = () => {
 };
 
 const likeTopster = () => {
+  console.log(`likeTopster() = ${props.topster.id}`);
   axios
     .post(`topsters/${props.topster.id}/like`)
-    .then(() => {
-      axios
-        .get(`topsters/${props.topster.id}/like-count/status`)
-        .then((res) => {
-          const status = res.data;
-          if (status) {
-            alert('좋아요');
-          } else {
-            alert('좋아요 취소');
-          }
-        });
+    .then((res) => {
+      alert(res.data.message);
       reloadLike();
     })
     .catch(() => {
@@ -174,11 +166,18 @@ const isAuthor = () => {
 watch(
   () => props.topster,
   (topster) => {
-    axios.get(`topsters/${topster.id}/like-count/status`).then((res) => {
-      likes.value = res.data;
-    });
+    if (topster && topster.id) {
+      reloadLike();
+      console.log('실행!');
+    }
   },
 );
+
+onMounted(() => {
+  if (props.topster && props.topster.id) {
+    reloadLike();
+  }
+});
 </script>
 
 <style scoped>
