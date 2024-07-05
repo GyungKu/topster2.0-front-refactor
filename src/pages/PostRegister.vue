@@ -1,10 +1,10 @@
 <template>
   <div>
-    <TopsterCard :topster="topster" :no-btn="'no'" v-if="topster != null" />
+    <TopsterCard :topster="topster" :no-btn="'no'" v-if="topster !== null" />
     <form @submit.prevent="submitPost">
       <label for="title"
         >제목:
-        <p class="inputError" v-if="titleError != null">
+        <p class="inputError" v-if="titleError !== null">
           {{ titleError.message }}
         </p></label
       >
@@ -12,7 +12,7 @@
 
       <label for="content"
         >내용:
-        <p class="inputError" v-if="contentError != null">
+        <p class="inputError" v-if="contentError !== null">
           {{ contentError.message }}
         </p></label
       >
@@ -40,8 +40,8 @@ const contentError = ref(null);
 
 const submitPost = () => {
   const formData = {
-    title: this.title,
-    content: this.content,
+    title: title.value,
+    content: content.value,
   };
 
   const { topsterId } = route.params;
