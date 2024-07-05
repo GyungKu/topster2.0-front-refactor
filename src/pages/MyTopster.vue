@@ -16,7 +16,7 @@
 
 <script setup>
 import axios from 'axios';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import TopsterCard from '@/components/TopsterCard.vue';
 
 defineOptions({ name: 'MyTopster ' });
