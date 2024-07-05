@@ -1,24 +1,8 @@
-# topster-front
+# 개선 사항
 
-## Project setup
-```
-npm install
-```
+## 코드 리팩토링
+- 기존 options api에서 composition api & script setup 으로 코드 리팩토링
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 버그 수정
+- 로그인 후 accessToken이 있음에도 계속 refreshToken을 통해 요청하던 것 수정
+  - accessToken을 체크할 때 JSON parsing을 안하고 있어서 수정
