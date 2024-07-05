@@ -14,6 +14,7 @@ router.beforeEach((to, from, next) => {
 
   // access token이 존재하고, 유효기간이 지나지 않았다면 이동
   if (accessToken && Date.now() < accessToken.expire) {
+    axios.defaults.headers.common.authorization = accessToken.token;
     next();
     return;
   }
