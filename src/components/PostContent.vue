@@ -49,7 +49,7 @@ const deletePost = () => {
 
 const editPost = () => {
   axios
-    .get(`/posts/${props.id}/isAuthor`)
+    .get(`/posts/${props.post.id}/isAuthor`)
     .then(() => {
       router.push({ name: 'postEdit', params: { postId: props.post.id } });
     })
