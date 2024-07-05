@@ -93,7 +93,7 @@ const search = () => {
         alert('검색 결과가 없습니다.');
         page.value = 1; // 페이지를 1로 리셋
       }
-      posts.value = content;
+      posts.value = content.content;
       totalPages.value = response.data.totalPages;
     })
     .catch((error) => {

@@ -30,10 +30,8 @@
 <script setup>
 import { ref, computed } from 'vue';
 import axios from 'axios';
-import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
-import ImageCard from '@/components/ImageCard.vue';
-
-defineOptions({ name: 'ImageCard2' });
+import ImageCard from './ImageCard.vue';
+import AlbumDetail from './AlbumDetail.vue';
 
 const { topster } = defineProps({ topster: Object });
 const isModalOpen = ref(false);

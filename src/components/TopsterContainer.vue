@@ -1,6 +1,6 @@
 <template>
   <div class="topster-container">
-    <TopsterCard
+    <ImageCard
       v-for="(image, index) in props.topster.images"
       :key="index"
       :albumImage="image.url"
@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import TopsterCard from '@/components/ImageCard.vue';
+import ImageCard from './ImageCard.vue';
 
 const props = defineProps({ topster: {} });
 </script>

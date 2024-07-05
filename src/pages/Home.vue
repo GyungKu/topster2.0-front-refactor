@@ -21,7 +21,6 @@ import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import TopsterCard from '@/components/TopsterCard.vue';
 
-defineOptions({ name: 'Home' });
 const topsters = ref([]);
 
 onMounted(() => {

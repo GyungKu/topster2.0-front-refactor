@@ -24,8 +24,9 @@
 </template>
 
 <script setup>
+import TopsterCard from '@/components/TopsterCard.vue';
 import axios from 'axios';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const topster = ref({});

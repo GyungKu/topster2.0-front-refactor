@@ -40,6 +40,8 @@
 </template>
 
 <script setup>
+import ImageCard from '@/components/ImageCard.vue';
+import SearchModal from '@/components/SearchModal.vue';
 import axios from 'axios';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';

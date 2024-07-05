@@ -24,9 +24,9 @@
 
 <script setup>
 import axios from 'axios';
-import ImageCard from '@/components/ImageCard.vue';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import ImageCard from './ImageCard.vue';
 
 const query = ref('');
 const albums = ref([]);

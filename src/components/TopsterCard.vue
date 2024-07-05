@@ -80,7 +80,6 @@ import router from '@/scripts/router';
 import { onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 
-defineOptions({ name: 'TopsterCard' });
 const props = defineProps({
   topster: {},
   noPost: String,
@@ -173,6 +172,7 @@ const isAuthor = () => {
 // });
 
 onMounted(() => {
+  console.log(props.topster.id);
   axios.get(`topsters/${props.topster.id}/like-count/status`).then((res) => {
     likes.value = res.data;
   });

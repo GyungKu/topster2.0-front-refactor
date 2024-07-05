@@ -19,8 +19,6 @@
 <script setup>
 import { computed } from 'vue';
 
-defineOptions({ name: 'CustomPagenation ' });
-
 const props = defineProps({ page: Number, totalPages: Number });
 const emit = defineEmits(['pageChange']);
 

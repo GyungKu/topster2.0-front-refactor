@@ -19,6 +19,7 @@
 </template>
 
 <script setup>
+import TopsterCard from '@/components/TopsterCard.vue';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';

@@ -36,7 +36,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import CommentForm from '@/components/CommentForm.vue';
+import CommentList from '@/components/CommentList.vue';
+import PostContent from '@/components/PostContent.vue';
+import TopsterCard from '@/components/TopsterCard.vue';
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -140,6 +144,7 @@ onMounted(() => {
 
       axios.get(`/topsters/${response.data.topsterId}`).then((res) => {
         topster.value = res.data;
+        console.log(topster.value.id);
       });
     })
     .catch(() => {
