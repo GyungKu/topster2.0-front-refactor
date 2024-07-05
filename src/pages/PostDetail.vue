@@ -144,7 +144,6 @@ onMounted(() => {
 
       axios.get(`/topsters/${response.data.topsterId}`).then((res) => {
         topster.value = res.data;
-        console.log(topster.value.id);
       });
     })
     .catch(() => {
