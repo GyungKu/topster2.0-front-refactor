@@ -87,7 +87,7 @@ const search = () => {
       },
     })
     .then((response) => {
-      const content = response.data;
+      const { content } = response.data;
       if (content.length === 0) {
         alert('검색 결과가 없습니다.');
         page.value = 1; // 페이지를 1로 리셋
