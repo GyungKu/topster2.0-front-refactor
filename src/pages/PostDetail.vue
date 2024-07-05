@@ -1,11 +1,6 @@
 <template>
   <div>
-    <TopsterCard
-      :topster="topster"
-      v-if="topster != null"
-      :no-post="'no'"
-      :centerAlign="true"
-    />
+    <TopsterCard :topster="topster" :no-post="'no'" :centerAlign="true" />
 
     <PostContent :post="post" />
 

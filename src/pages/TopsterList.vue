@@ -19,6 +19,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
+import TopsterCard from '@/components/TopsterCard.vue';
 
 const topsters = ref([]);
 const page = ref(1);
