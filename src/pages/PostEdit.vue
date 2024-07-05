@@ -1,9 +1,14 @@
 <template>
   <div>
-    <TopsterCard v-if="topster != null" :topster="topster" :no-btn="'no'" :center-align="true" />
+    <TopsterCard
+      v-if="topster != null"
+      :topster="topster"
+      :no-btn="'no'"
+      :center-align="true"
+    />
     <form @submit.prevent="submitPost">
       <label for="title">제목:</label>
-      <input type="text" v-model="post.title" id="title" required>
+      <input type="text" v-model="post.title" id="title" required />
 
       <label for="content">내용:</label>
       <textarea v-model="post.content" id="content" required></textarea>
@@ -13,69 +18,56 @@
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import router from "@/scripts/router";
-import TopsterCard from "@/components/TopsterCard.vue";
+<script setup>
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-  components: {
-    TopsterCard,
-  },
+const post = ref({
+  title: '',
+  content: '',
+});
+const topster = ref({});
+const topsterId = ref(0);
+const route = useRoute();
+const router = useRouter();
 
-  data() {
-    return {
-      post: {
-        title: "",
-        content: "",
-      },
-      topster:null,
-      topsterId: 0,
-    }
-  },
+const submitPost = () => {
+  const formData = {
+    title: post.value.title,
+    content: post.value.content,
+  };
 
-  created() {
-    const postId = this.$route.params.postId;
+  const { postId } = route.params;
+  axios
+    .patch(`/posts/${postId}`, formData)
+    .then(() => {
+      alert('수정 완료!');
+      router.push(`/posts/${postId}`);
+    })
+    .catch((err) => {
+      alert(err.response.data.message);
+      router.push('/');
+    });
+};
 
-    axios.get(`/posts/${postId}`)
-    .then(response => {
-      this.post = response.data;
-      this.topsterId = response.data.topsterId;
+onMounted(() => {
+  const { postId } = route.params;
 
-      axios.get(`/topsters/${this.topsterId}`)
-      .then((res) => {
-        this.topster = res.data;
+  axios
+    .get(`/posts/${postId}`)
+    .then((response) => {
+      post.value = response.data;
+      topsterId.value = response.data.topsterId;
+
+      axios.get(`/topsters/${topsterId.value}`).then((res) => {
+        topster.value = res.data;
       });
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('게시글 정보를 불러오는 중 오류 발생:', error);
     });
-
-  },
-
-  methods: {
-    submitPost() {
-      const formData = {
-        title: this.post.title,
-        content: this.post.content,
-      };
-
-      const postId = this.$route.params.postId;
-      axios.patch(`/posts/${postId}`, formData)
-      .then(() => {
-        alert("수정 완료!");
-        router.push(`/posts/${postId}`);
-      })
-      .catch((err) => {
-        alert(err.response.data.message);
-        router.push('/');
-      })
-    }
-
-  }
-
-}
-;
+});
 </script>
 
 <style scoped>
@@ -109,7 +101,7 @@ textarea {
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 10px;
   border: none;

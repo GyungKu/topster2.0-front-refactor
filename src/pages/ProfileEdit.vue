@@ -1,65 +1,65 @@
 <template>
   <div class="form-signup w-100">
     <div class="form-floating">
-      <input type="nickname" class="form-control" id="floatingInput" placeholder="nickname"
-             v-model="userInfo.nickname">
+      <input
+        type="nickname"
+        class="form-control"
+        id="floatingInput"
+        placeholder="nickname"
+        v-model="userInfo.nickname"
+      />
       <label for="floatingInput">닉네임을 입력해 주세요</label>
     </div>
     <div class="form-floating">
-      <input type="intro" class="form-control" id="floatingInput" placeholder="intro"
-             v-model="userInfo.intro">
+      <input
+        type="intro"
+        class="form-control"
+        id="floatingInput"
+        placeholder="intro"
+        v-model="userInfo.intro"
+      />
       <label for="floatingInput">자기소개를 입력해 주세요</label>
     </div>
     <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
-             v-model="userInfo.password">
+      <input
+        type="password"
+        class="form-control"
+        id="floatingPassword"
+        placeholder="Password"
+        v-model="userInfo.password"
+      />
       <label for="floatingPassword">원래 비밀번호를 입력해 주세요</label>
     </div>
     <button class="btn btn-primary w-100 py-2" @click="submit()">수정</button>
   </div>
-
 </template>
-<script>
 
-import axios from "axios";
-import router from "@/scripts/router";
+<script setup>
+import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  data() {
-    return {
-      userInfo: {},
-    }
-  },
+const userInfo = ref({});
+const router = useRouter();
 
-  mounted() {
-    axios.get('/users')
-    .then(res => {
-      this.userInfo = res.data;
+const submit = () => {
+  axios
+    .patch('/users/update', userInfo.value)
+    .then(() => {
+      alert('정보 수정 완료');
+      router.push({ name: 'myProfile' });
     })
-  },
-
-  methods: {
-    submit() {
-      axios.patch("/users/update", this.userInfo)
-      .then(() => {
-        alert('정보 수정 완료');
-        router.push({name: 'myProfile'});
-      }).catch((err) => {
-        const code = err.response.data.code;
-        if (code === '1002') {
-          alert('중복된 닉네임 입니다.');
-        }
-        if (code === '1010') {
-          alert('비밀번호가 틀렸습니다.');
-        }
-      })
-    }
-  }
-
-}
-
+    .catch((err) => {
+      const { code } = err.response.data;
+      if (code === '1002') {
+        alert('중복된 닉네임 입니다.');
+      }
+      if (code === '1010') {
+        alert('비밀번호가 틀렸습니다.');
+      }
+    });
+};
 </script>
-
 
 <style scoped>
 .form-signup {

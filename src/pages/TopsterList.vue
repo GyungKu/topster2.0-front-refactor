@@ -4,68 +4,62 @@
 
     <div class="album py-5 bg-body-tertiary">
       <div class="container">
-
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          <TopsterCard v-for="(topster, idx) in topsters" :key="idx" :topster="topster"/>
+          <TopsterCard
+            v-for="(topster, idx) in topsters"
+            :key="idx"
+            :topster="topster"
+          />
         </div>
       </div>
-
     </div>
   </div>
 </template>
 
-<script>
-import { ref, onMounted, onUnmounted } from 'vue'
-import axios from 'axios'
-import TopsterCard from "@/components/TopsterCard.vue";
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
 
-export default {
-  components: {TopsterCard},
-  setup() {
-    const topsters = ref([])
-    let page = 1
-    const size = 9
+const topsters = ref([]);
+const page = ref(1);
+const size = ref(9);
+const isLoading = ref(false);
 
-    let isLoading = false;
-
-    const loadItems = async () => {
-      if (!isLoading) {
-        isLoading = true;
-        try {
-          const response = await axios.get(`topsters?page=${page}&size=${size}`)
-          const data = response.data.content;
-          topsters.value = [...topsters.value, ...data];
-          page++;
-        } catch (error) {
-          window.removeEventListener('scroll', handleScroll);
-          alert('더 이상 불러올 데이터가 없습니다.');
-        } finally {
-          isLoading = false;
-        }
-      }
-    }
-
-    const handleScroll = () => {
-      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 150;
-      if (nearBottom) {
-        loadItems();
-      }
-    };
-
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll);
-      loadItems();
-    })
-
-    onUnmounted(() => {
+const loadItems = async () => {
+  if (!isLoading.value) {
+    isLoading.value = true;
+    try {
+      const response = await axios.get(
+        `topsters?page=${page.value}&size=${size.value}`,
+      );
+      const data = response.data.content;
+      topsters.value = [...topsters.value, ...data];
+      page.value += 1;
+    } catch (error) {
       window.removeEventListener('scroll', handleScroll);
-    })
-
-    return {
-      topsters
+      alert('더 이상 불러올 데이터가 없습니다.');
+    } finally {
+      isLoading.value = false;
     }
   }
-}
+};
+
+const handleScroll = () => {
+  const nearBottom =
+    window.innerHeight + window.scrollY >= document.body.offsetHeight - 150;
+  if (nearBottom) {
+    loadItems();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+  loadItems();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped>

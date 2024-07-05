@@ -1,11 +1,21 @@
 <template>
   <div>
-    <TopsterCard :topster="state.topster" :no-btn="'no'" v-if="state.topster != null" />
+    <TopsterCard :topster="topster" :no-btn="'no'" v-if="topster != null" />
     <form @submit.prevent="submitPost">
-      <label for="title">제목:<p class="inputError" v-if="titleError != null">{{ titleError.message }}</p></label>
-      <input type="text" v-model="title" id="title" required>
+      <label for="title"
+        >제목:
+        <p class="inputError" v-if="titleError != null">
+          {{ titleError.message }}
+        </p></label
+      >
+      <input type="text" v-model="title" id="title" required />
 
-      <label for="content">내용:<p class="inputError" v-if="contentError != null">{{ contentError.message }}</p></label>
+      <label for="content"
+        >내용:
+        <p class="inputError" v-if="contentError != null">
+          {{ contentError.message }}
+        </p></label
+      >
       <textarea v-model="content" id="content" required></textarea>
 
       <button type="submit">게시글 작성</button>
@@ -13,83 +23,64 @@
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import {onMounted, reactive, ref} from "vue";
-import {useRoute, useRouter} from "vue-router";
-import TopsterCard from "@/components/TopsterCard.vue";
-import router from "@/scripts/router";
+<script setup>
+import axios from 'axios';
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-  components: {TopsterCard, },
-  setup() {
-    const state = reactive({
-      topster: null
-    });
+const topster = ref({});
+const route = useRoute();
+const router = useRouter();
+const id = ref(0);
+const title = ref('');
+const content = ref('');
+const titleError = ref(null);
+const contentError = ref(null);
 
-    const route = useRoute();
-    const router = useRouter();
-    const id = ref(null);
+const submitPost = () => {
+  const formData = {
+    title: this.title,
+    content: this.content,
+  };
 
-    onMounted(() => {
-      id.value = route.params.topsterId;
-      axios.get(`/topsters/${id.value}`)
-      .then(res => {
-        state.topster = res.data;
-      })
-      .catch(err => {
-        const errInfo = err.response;
-        alert(errInfo.data);
-        router.push("/");
+  const { topsterId } = route.params;
+
+  axios
+    .post(`/topster/${topsterId}/posts`, formData)
+    .then((res) => {
+      const postId = res.data.message;
+      alert('등록 완료!');
+      router.push({ name: 'postDetail', params: { postId } });
+    })
+    .catch((err) => {
+      const errors = err.response.data.data;
+      titleError.value = null;
+      contentError.value = null;
+      errors.forEach((error) => {
+        const { field } = error;
+        if (field === 'title') {
+          titleError.value = error;
+        }
+        if (field === 'content') {
+          contentError.value = error;
+        }
       });
     });
-
-    return { state };
-  },
-
-  data() {
-    return {
-      title: "",
-      content: "",
-      titleError: null,
-      contentError: null
-    }
-  },
-
-  methods: {
-    submitPost() {
-      const formData = {
-        title: this.title,
-        content: this.content,
-      };
-
-      const topsterId = this.$route.params.topsterId;
-
-      axios.post(`/topster/${topsterId}/posts`, formData)
-      .then((res) => {
-        const postId = res.data.message;
-        alert("등록 완료!");
-        router.push({name: 'postDetail', params: {postId: postId}});
-      })
-      .catch((err) => {
-        const errors = err.response.data.data;
-        this.titleError = null;
-        this.contentError = null;
-        errors.forEach(error => {
-          const field = error.field;
-          if (field === 'title') {
-            this.titleError = error;
-          }
-          if (field === 'content') {
-            this.contentError = error;
-          }
-        })
-      })
-    }
-
-  }
-
 };
+
+onMounted(() => {
+  id.value = route.params.topsterId;
+  axios
+    .get(`/topsters/${id.value}`)
+    .then((res) => {
+      topster.value = res.data;
+    })
+    .catch((err) => {
+      const errInfo = err.response;
+      alert(errInfo.data);
+      router.push('/');
+    });
+});
 </script>
 
 <style scoped>
@@ -123,7 +114,7 @@ textarea {
 }
 
 button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 10px;
   border: none;

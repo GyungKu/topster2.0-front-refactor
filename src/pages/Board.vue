@@ -1,166 +1,162 @@
 <template>
-    <div class="page-title">
-      <div class="container">
-        <h3>탑스터 공유 게시판<br>
-          본인의 탑스터를 통해서만 게시글 작성이 가능합니다</h3>
-      </div>
+  <div class="page-title">
+    <div class="container">
+      <h3>
+        탑스터 공유 게시판<br />
+        본인의 탑스터를 통해서만 게시글 작성이 가능합니다
+      </h3>
     </div>
+  </div>
 
-    <!-- board seach area -->
-    <SearchBar :searchCond="searchCond" @searchCond="searchCondSet"></SearchBar>
+  <!-- board seach area -->
+  <SearchBar :searchCond="searchCond" @searchCond="searchCondSet"></SearchBar>
 
-    <!-- board list area -->
-    <div id="board-list">
-      <div class="container">
-        <!-- 추가: 최대 항목 수(max) 설정 -->
-        <div class="max-per-page">
-          <label for="maxPerPage">최대 항목 수:</label>
-          <select v-model="max" @change="search">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <!-- 필요에 따라 다양한 옵션 추가 가능 -->
-          </select>
-        </div>
-        <table class="board-table">
-          <thead>
+  <!-- board list area -->
+  <div id="board-list">
+    <div class="container">
+      <!-- 추가: 최대 항목 수(max) 설정 -->
+      <div class="max-per-page">
+        <label for="maxPerPage">최대 항목 수:</label>
+        <select v-model="max" @change="search">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <!-- 필요에 따라 다양한 옵션 추가 가능 -->
+        </select>
+      </div>
+      <table class="board-table">
+        <thead>
           <tr>
             <th scope="col" class="th-num">번호</th>
             <th scope="col" class="th-title">제목</th>
             <th scope="col" class="th-date">작성자</th>
             <th scope="col" class="th-date">등록일</th>
           </tr>
-          </thead>
-          <tbody v-for="post in posts" :key="post.id">
+        </thead>
+        <tbody v-for="post in posts" :key="post.id">
           <tr>
             <td>{{ post.id }}</td>
             <th>
-              <router-link :to="{name: 'postDetail', params: {postId: post.id}}">{{ post.title }}</router-link>
+              <router-link
+                :to="{ name: 'postDetail', params: { postId: post.id } }"
+                >{{ post.title }}</router-link
+              >
             </th>
             <td>{{ post.author }}</td>
             <td>{{ formatDate(post.createdAt) }}</td>
           </tr>
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
+  </div>
 
-    <!-- 페이지네이션 컨트롤 -->
-  <Pagination :page="page" :totalPages="totalPages" :totalPageArray="generatePageArray" @pageChange="handlePageChange" />
-
+  <!-- 페이지네이션 컨트롤 -->
+  <Pagination
+    :page="page"
+    :totalPages="totalPages"
+    :totalPageArray="generatePageArray"
+    @pageChange="handlePageChange"
+  />
 </template>
 
-<script>
-import axios from "axios";
-import SearchBar from "@/components/SearchBar.vue";
-import Pagination from "@/components/Pagination.vue";
+<script setup>
+import axios from 'axios';
+import SearchBar from '@/components/SearchBar.vue';
+import Pagination from '@/components/Pagination.vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
-export default {
-  components: {
-    Pagination,
-    SearchBar,
-  },
+const searchCond = ref({
+  searchKey: '',
+  query: '',
+});
 
-  data() {
-    return {
-      searchCond: {
-        searchKey: '',
-        query: '',
+// const sortBy = ref('created_at');
+// const sortAsc = ref(true);
+const page = ref(1);
+const max = ref(10);
+const posts = ref([]);
+const totalPages = ref(1);
+const totalPageArray = ref([]);
+
+const search = () => {
+  axios
+    .get(`/posts`, {
+      params: {
+        ...searchCond.value,
+        page: page.value,
+        max: max.value,
       },
-      sortBy: 'created_at',
-      sortAsc: true,
-      page: 1,
-      max: 10,
-      posts: [],
-      totalPages: 1, // totalPages를 추가합니다.
-      totalPageArray: [],
-    };
-  },
-
-  mounted() {
-    this.search();
-  },
-  methods: {
-    search() {
-      const queryString = `?key=${this.searchCond.searchKey}&query=${this.searchCond.query}&page=${this.page}&max=${this.max}`;
-
-      axios.get(`/posts${queryString}`)
-      .then(response => {
-        const content = response.data.content;
-        if (content.length === 0) {
-          alert('검색 결과가 없습니다.');
-          this.page = 1; // 페이지를 1로 리셋
-        }
-        this.posts = content;
-        this.totalPages = response.data.totalPages;
-      })
-      .catch(error => {
-        console.error('게시물을 불러오는 중 에러 발생:', error);
-      });
-    },
-
-    searchCondSet(searchCond) {
-      this.searchCond = searchCond;
-      this.page = 1; // 검색 시 페이지를 1로 초기화
-      this.search(); // 검색 시에도 게시물을 다시 가져오도록 수정
-    },
-
-    formatDate(createdAt) {
-      const date = new Date(createdAt);
-      const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
-      return formattedDate;
-    },
-
-    prevPage() {
-      if (this.page > 1) {
-        this.page--;
-        this.search();
+    })
+    .then((response) => {
+      const content = response.data;
+      if (content.length === 0) {
+        alert('검색 결과가 없습니다.');
+        page.value = 1; // 페이지를 1로 리셋
       }
-    },
-
-    nextPage() {
-      if (this.page < this.totalPages) {
-        this.page++;
-        this.search();
-      }
-    },
-
-    gotoPage(pageNumber) {
-      this.page = pageNumber;
-      this.search();
-    },
-
-    handlePageChange(newPage) {
-      this.page = newPage;
-      this.search(); // 페이지 변경 시에도 게시물을 다시 가져오도록 수정
-    },
-
-  },
-
-  computed: {
-    generatePageArray() {
-      return Array.from({ length: this.totalPages }, (_, index) => index + 1);
-    },
-  },
-
-  watch: {
-    // 페이지가 바뀔 때마다 totalPageArray 업데이트
-    page() {
-      this.totalPageArray = this.generatePageArray;
-    },
-
-    max() {
-      this.page = 1;
-      this.search();
-    },
-
-  },
-
+      posts.value = content;
+      totalPages.value = response.data.totalPages;
+    })
+    .catch((error) => {
+      console.error('게시물을 불러오는 중 에러 발생:', error);
+    });
 };
 
-function padZero(value) {
+const searchCondSet = (searchCondition) => {
+  searchCond.value = searchCondition;
+  page.value = 1; // 검색 시 페이지를 1로 초기화
+  search(); // 검색 시에도 게시물을 다시 가져오도록 수정
+};
+
+const padZero = (value) => {
   return value < 10 ? `0${value}` : value;
-}
+};
+
+const formatDate = (createdAt) => {
+  const date = new Date(createdAt);
+  const formattedDate = `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(date.getMinutes())}:${padZero(date.getSeconds())}`;
+  return formattedDate;
+};
+
+// const prevPage = () => {
+//   if (page.value > 1) {
+//     page.value -= 1;
+//     search();
+//   }
+// };
+
+// const nextPage = () => {
+//   if (page.value < totalPages.value) {
+//     page.value += 1;
+//     search();
+//   }
+// };
+
+// const gotoPage = (pageNumber) => {
+//   page.value = pageNumber;
+//   this.search();
+// };
+
+const handlePageChange = (newPage) => {
+  page.value = newPage;
+  search(); // 페이지 변경 시에도 게시물을 다시 가져오도록 수정
+};
+
+const generatePageArray = computed(() => {
+  return Array.from({ length: totalPages.value }, (_, index) => index + 1);
+});
+
+watch(page, () => {
+  totalPageArray.value = generatePageArray.value;
+});
+
+watch(max, () => {
+  page.value = 1;
+  search();
+});
+
+onMounted(() => {
+  search();
+});
 </script>
 
 <style scoped>
@@ -245,7 +241,8 @@ section.notice {
   width: 200px;
 }
 
-.board-table th, .board-table td {
+.board-table th,
+.board-table td {
   padding: 14px 0;
 }
 
@@ -261,7 +258,7 @@ section.notice {
   text-align: left;
 }
 
-.board-table tbody th p{
+.board-table tbody th p {
   display: none;
 }
 
@@ -298,7 +295,8 @@ section.notice {
   color: #fff;
 }
 
-.btn-dark:hover, .btn-dark:focus {
+.btn-dark:hover,
+.btn-dark:focus {
   background: #373737;
   border-color: #373737;
   color: #fff;
@@ -309,7 +307,8 @@ section.notice {
   color: #fff;
 }
 
-.btn-dark:hover, .btn-dark:focus {
+.btn-dark:hover,
+.btn-dark:focus {
   background: #373737;
   border-color: #373737;
   color: #fff;

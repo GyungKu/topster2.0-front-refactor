@@ -5,12 +5,17 @@
       <label for="title">제목:</label>
       <input type="text" v-model="title" id="title" />
 
-
       <!-- 검색 모달 창 -->
-      <SearchModal :items="searchModalItems" @item-selected="handleItemSelected" v-if="isSearchModalOpen"
-      @close-modal="closeSearchModal" />
+      <SearchModal
+        :items="searchModalItems"
+        @item-selected="handleItemSelected"
+        v-if="isSearchModalOpen"
+        @close-modal="closeSearchModal"
+      />
       <div class="button-container">
-        <button class="search-button" @click="openSearchModal">가수 검색 하기</button>
+        <button class="search-button" @click="openSearchModal">
+          가수 검색 하기
+        </button>
         <button class="submit-button" @click="submitPost">등록 완료</button>
       </div>
     </div>
@@ -18,80 +23,79 @@
     <!-- 오른쪽 영역에 이미지 표시 -->
     <div class="topster-container">
       <!-- TopsterCard 컴포넌트를 사용하여 이미지 표시 -->
-      <ImageCard v-for="(selectedItem, idx) in selectedItems" :key="selectedItem.id"
-                 :albumImage="selectedItem.image" @card-clicked="removeCard(idx)" />
+      <ImageCard
+        v-for="(selectedItem, idx) in selectedItems"
+        :key="selectedItem.id"
+        :albumImage="selectedItem.image"
+        @card-clicked="removeCard(idx)"
+      />
       <!-- 9개의 빈 아이템을 추가 -->
-      <div v-for="index in Math.max(9 - selectedItems.length, 0)" :key="`empty-${index}`"
-          class="item empty" />
+      <div
+        v-for="index in Math.max(9 - selectedItems.length, 0)"
+        :key="`empty-${index}`"
+        class="item empty"
+      />
     </div>
-
   </div>
 </template>
 
-<script>
-import SearchModal from "@/components/SearchModal.vue";
-import axios from "axios";
-import ImageCard from "@/components/ImageCard.vue";
-import router from "@/scripts/router";
+<script setup>
+import axios from 'axios';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  components: {
-    ImageCard,
-    SearchModal,
-  },
-  data() {
-    return {
-      isSearchModalOpen: false,
-      searchModalItems: [],
-      selectedItems: [],
-      title: "", // 추가: 제목을 담을 데이터
-      content: "" // 추가: 내용을 담을 데이터
-    };
-  },
-  methods: {
-    openSearchModal() {
-      this.isSearchModalOpen = true;
-    },
-    closeSearchModal() {
-      this.isSearchModalOpen = false;
-    },
-    handleItemSelected(item) {
-      if (this.selectedItems.length == 9) {
-        alert('더이상 추가할 수 없습니다.');
-        return;
-      }
-      this.selectedItems.push(item);
-    },
-    submitPost() {
-      // 추가: 제목, 내용, 앨범 정보를 서버에 POST 요청 보내기
-      const postData = {
-        title: this.title,
-        content: this.content,
-        albums: this.selectedItems
-      };
+const isSearchModalOpen = ref(false);
+const searchModalItems = ref([]);
+const selectedItems = ref([]);
+const title = ref('');
+// const content = ref('');
+const router = useRouter();
 
-      axios.post("/topsters", postData)
-      .then(response => {
+const openSearchModal = () => {
+  isSearchModalOpen.value = true;
+};
 
-        if (response.data.code == '1009') {
-          alert('로그인이 필요한 기능입니다.');
-          router.push('/login');
-        }
+const closeSearchModal = () => {
+  isSearchModalOpen.value = false;
+};
 
-        alert('탑스터 등록 완료!');
-
-        // 성공적으로 등록되면 데이터 초기화 또는 다른 동작 수행
-        this.title = "";
-        this.selectedItems = [];
-      })
-      .catch(error => {
-        console.error("등록 중 오류 발생:", error);
-      });
-    },
-    removeCard(idx) {
-      this.selectedItems.splice(idx, 1);
-    },
+const handleItemSelected = (item) => {
+  if (this.selectedItems.length === 9) {
+    alert('더이상 추가할 수 없습니다.');
+    return;
   }
+  selectedItems.value.push(item);
+};
+
+const submitPost = () => {
+  // 추가: 제목, 내용, 앨범 정보를 서버에 POST 요청 보내기
+  const postData = {
+    title: title.value,
+    // content: this.content,
+    albums: selectedItems.value,
+  };
+
+  axios
+    .post('/topsters', postData)
+    .then((response) => {
+      if (response.data.code === '1009') {
+        alert('로그인이 필요한 기능입니다.');
+        router.push('/login');
+      }
+
+      alert('탑스터 등록 완료!');
+
+      // 성공적으로 등록되면 데이터 초기화 또는 다른 동작 수행
+      title.value = '';
+      selectedItems.value = [];
+    })
+    .catch((error) => {
+      console.error('등록 중 오류 발생:', error);
+    });
+};
+
+const removeCard = (idx) => {
+  selectedItems.value.splice(idx, 1);
 };
 </script>
 
@@ -139,7 +143,7 @@ export default {
 
 /* 등록 완료 버튼 스타일 추가 */
 .submit-button {
-  background-color: #008CBA; /* 파란색 */
+  background-color: #008cba; /* 파란색 */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -150,7 +154,6 @@ export default {
   cursor: pointer;
   border-radius: 5px;
 }
-
 
 .topster-container {
   width: 40%;
