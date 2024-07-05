@@ -46,7 +46,7 @@
           </div>
           <div v-if="likes != null">
             <button
-              v-if="likes.status == false"
+              v-if="likes.status === false"
               @click="likeTopster"
               class="btn btn-success"
             >
@@ -77,7 +77,7 @@ import axios from 'axios';
 import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
 import ImageCard from '@/components/ImageCard.vue';
 import router from '@/scripts/router';
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const props = defineProps({
@@ -91,7 +91,7 @@ const store = useStore();
 
 const isModalOpen = ref(false);
 const album = ref({});
-const likes = ref();
+const likes = ref({});
 
 const handleCardClicked = (clickAlbum) => {
   album.value = clickAlbum;
@@ -171,12 +171,14 @@ const isAuthor = () => {
 //   return props.topster.albums.slice().reverse();
 // });
 
-onMounted(() => {
-  console.log(props.topster.id);
-  axios.get(`topsters/${props.topster.id}/like-count/status`).then((res) => {
-    likes.value = res.data;
-  });
-});
+watch(
+  () => props.topster,
+  (topster) => {
+    axios.get(`topsters/${topster.id}/like-count/status`).then((res) => {
+      likes.value = res.data;
+    });
+  },
+);
 </script>
 
 <style scoped>
