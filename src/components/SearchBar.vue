@@ -3,7 +3,7 @@
     <div class="container">
       <div class="search-window">
         <div class="search-wrap">
-          <select v-model="searchCond.searchKey">
+          <select v-model="searchCond.key">
             <option
               v-for="(item, idx) in selectList"
               :key="idx"
@@ -19,13 +19,9 @@
             placeholder="검색어를 입력해주세요."
             value=""
             v-model="searchCond.query"
-            @keydown.enter="searchPost(searchCond)"
+            @keydown.enter="searchPost"
           />
-          <button
-            type="submit"
-            class="btn btn-dark"
-            @click="searchPost(searchCond)"
-          >
+          <button type="submit" class="btn btn-dark" @click="searchPost">
             검색
           </button>
         </div>
@@ -48,7 +44,7 @@ const emit = defineEmits(['searchCond']);
 
 const selectList = ref([]);
 const searchCond = ref({
-  searchKey: '',
+  key: '',
   query: '',
 });
 
@@ -67,7 +63,7 @@ if (props.my === null) {
   ];
 }
 
-const searchPost = (searchCondition) => {
-  emit('searchCond', searchCondition);
+const searchPost = () => {
+  emit('searchCond', searchCond.value);
 };
 </script>

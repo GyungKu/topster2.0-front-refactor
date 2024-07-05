@@ -66,7 +66,7 @@ import Pagination from '@/components/Pagination.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 
 const searchCond = ref({
-  searchKey: '',
+  key: '',
   query: '',
 });
 
