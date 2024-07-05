@@ -133,7 +133,6 @@ const reloadLike = () => {
 };
 
 const likeTopster = () => {
-  console.log(`likeTopster() = ${props.topster.id}`);
   axios
     .post(`topsters/${props.topster.id}/like`)
     .then((res) => {
@@ -168,7 +167,6 @@ watch(
   (topster) => {
     if (topster && topster.id) {
       reloadLike();
-      console.log('실행!');
     }
   },
 );
