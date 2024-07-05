@@ -16,21 +16,15 @@
   </form>
 </template>
 
-<script>
-export default {
-  props: {
-    value: String,
-  },
-  data() {
-    return {
-      sortBy: this.value,
-      sortOrder: "desc", // 초기값
-    };
-  },
-  methods: {
-    submitSort() {
-      this.$emit("submit-sort", this.sortBy, this.sortOrder);
-    },
-  },
+<script setup>
+import { ref } from 'vue';
+
+const props = defineProps({ value: String });
+const emit = defineEmits(['submit-sort']);
+const sortBy = ref(props.value);
+const sortOrder = ref('desc');
+
+const submitSort = () => {
+  emit('submit-sort', sortBy.value, sortOrder.value);
 };
 </script>

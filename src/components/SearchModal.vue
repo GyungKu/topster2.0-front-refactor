@@ -1,72 +1,70 @@
 <template>
   <div class="search-modal">
     <h2>앨범 검색</h2>
-    <input v-model="query" placeholder="가수, 노래명, 앨범명" @keydown.enter="search"/>
+    <input
+      v-model="query"
+      placeholder="가수, 노래명, 앨범명"
+      @keydown.enter="search"
+    />
     <button @click="search">검색</button>
 
     <div class="search-results-container">
-      <ImageCard v-for="(album, idx) in albums" :key="idx" :albumImage="album.image"
-                   class="img" @click="selectItem(album)"/>
+      <ImageCard
+        v-for="(album, idx) in albums"
+        :key="idx"
+        :albumImage="album.image"
+        class="img"
+        @click="selectItem(album)"
+      />
     </div>
     <!-- 닫기 버튼 추가 -->
     <button class="close-button" @click="closeModal">닫기</button>
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import ImageCard from "@/components/ImageCard.vue";
-import router from "@/scripts/router";
+<script setup>
+import axios from 'axios';
+import ImageCard from '@/components/ImageCard.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-export default {
-  components: {ImageCard, },
-  data() {
-    return {
-      query: "",
-      albums: [],
-    };
-  },
-  methods: {
-    search() {
-      // 가수 이름을 기반으로 서버에 검색 요청
-      axios.get(`/albums`, {
-        params: {
-          artistName: this.query, // query를 쿼리스트링으로 추가
-        },
-      })
-      .then(response => {
-        if (response.data.code == '1009') {
-          alert('로그인이 필요한 기능입니다.');
-          router.push('/login');
-        }
-        this.albums = response.data;
-      })
-      .catch(err => {
-        const errorCode = err.response.data.code;
-        if (errorCode === 'O1000') {
-          alert('검색된 자료가 없습니다!');
-        }
-        if (err.response.status === 500) {
-          alert('서버에 문제가 생겼습니다.');
-        }
-      })
-    },
-    selectItem(item) {
-      // 선택된 아이템을 부모 컴포넌트로 전달
-      this.$emit("item-selected", item);
-    },
-    closeModal() {
-      // 모달을 닫는 로직 작성
-      // 이 예시에서는 간단히 부모 컴포넌트에 이벤트를 발생시켜 닫는 동작을 처리합니다.
-      this.$emit("close-modal");
-    },
-  },
-  // 더미 데이터 추가
-  // created() {
-  //   this.albums = [
-  //     {"name": "뉴진스2", image: "https://www.akbobada.com/home/akbobada/archive/akbo/img/202301031113033.jpg"}
-  //   ]
-  // }
+const query = ref('');
+const albums = ref([]);
+const router = useRouter();
+const emit = defineEmits(['item-selected', 'close-modal']);
+
+const search = () => {
+  // 가수 이름을 기반으로 서버에 검색 요청
+  axios
+    .get(`/albums`, {
+      params: {
+        artistName: query.value, // query를 쿼리스트링으로 추가
+      },
+    })
+    .then((response) => {
+      if (response.data.code === '1009') {
+        alert('로그인이 필요한 기능입니다.');
+        router.push('/login');
+      }
+      albums.value = response.data;
+    })
+    .catch((err) => {
+      const errorCode = err.response.data.code;
+      if (errorCode === 'O1000') {
+        alert('검색된 자료가 없습니다!');
+      }
+      if (err.response.status === 500) {
+        alert('서버에 문제가 생겼습니다.');
+      }
+    });
+};
+
+const selectItem = (item) => {
+  emit('item-selected', item);
+};
+
+const closeModal = () => {
+  emit('close-modal');
 };
 </script>
 

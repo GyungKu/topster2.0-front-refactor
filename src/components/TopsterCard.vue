@@ -4,159 +4,179 @@
       <div class="card shadow-sm">
         <div class="image-container">
           <!-- TopsterCard 컴포넌트를 사용하여 이미지 표시 -->
-          <ImageCard v-for="(album, idx) in topster.albums || []" :key="idx"
-                     :albumImage="album.image" :album="album" class="img"
-                     @card-clicked="handleCardClicked(album)"/>
+          <ImageCard
+            v-for="(album, idx) in props.topster.albums || []"
+            :key="idx"
+            :albumImage="album.image"
+            :album="album"
+            class="img"
+            @card-clicked="handleCardClicked(album)"
+          />
           <!-- 9개의 빈 아이템을 추가 -->
-          <div v-for="index in Math.max(9 - (topster.albums?.length || 0), 0)"
-               :key="`empty-${index}`" class="item empty"></div>
+          <div
+            v-for="index in Math.max(
+              9 - (props.topster.albums?.length || 0),
+              0,
+            )"
+            :key="`empty-${index}`"
+            class="item empty"
+          ></div>
         </div>
         <div class="card-body">
-          <p class="card-text">제목 : {{ topster.title }}</p>
-          <div>작성자 : {{ topster.author }}</div>
-          <div>작성일 : {{ formatDate(topster.createdAt) }}</div>
+          <p class="card-text">제목 : {{ props.topster.title }}</p>
+          <div>작성자 : {{ props.topster.author }}</div>
+          <div>작성일 : {{ formatDate(props.topster.createdAt) }}</div>
           <div v-if="likes != null">좋아요 : {{ likes.likeCount }}</div>
         </div>
-        <div v-if="!noBtn && store.state.token !== null" class="d-flex justify-content-between align-items-center">
+        <div
+          v-if="!noBtn && store.state.token !== null"
+          class="d-flex justify-content-between align-items-center"
+        >
           <div>
-            <button v-if="!noPost" @click="isAuthor" class="btn btn-primary">게시글 작성하기</button>
-            <button v-if="!noPost" @click="deleteTopster" class="btn btn-danger">삭제</button>
+            <button v-if="!noPost" @click="isAuthor" class="btn btn-primary">
+              게시글 작성하기
+            </button>
+            <button
+              v-if="!noPost"
+              @click="deleteTopster"
+              class="btn btn-danger"
+            >
+              삭제
+            </button>
           </div>
           <div v-if="likes != null">
-            <button v-if="likes.status == false" @click="likeTopster" class="btn btn-success">좋아요</button>
-            <button v-else @click="likeTopster" class="btn btn-success btn-danger">좋아요 취소</button>
+            <button
+              v-if="likes.status == false"
+              @click="likeTopster"
+              class="btn btn-success"
+            >
+              좋아요
+            </button>
+            <button
+              v-else
+              @click="likeTopster"
+              class="btn btn-success btn-danger"
+            >
+              좋아요 취소
+            </button>
           </div>
         </div>
 
-        <AlbumDetail v-if="isModalOpen" :album="album" @close-modal="closeModal"/>
+        <AlbumDetail
+          v-if="isModalOpen"
+          :album="album"
+          @close-modal="closeModal"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import AlbumDetail from "@/components/AlbumDetail.vue"; // AlbumDetail 컴포넌트 추가
-import ImageCard from "@/components/ImageCard.vue";
-import axios from "axios";
-import store from "@/scripts/store";
-import router from "@/scripts/router";
+<script setup>
+import axios from 'axios';
+import AlbumDetail from '@/components/AlbumDetail.vue'; // AlbumDetail 컴포넌트 추가
+import ImageCard from '@/components/ImageCard.vue';
+import router from '@/scripts/router';
+import { onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
-  name: "TopsterCard",
-  components: {ImageCard, AlbumDetail}, // AlbumDetail 컴포넌트 등록
-  props: {
-    topster: Object,
-    noPost: {
-      type: String,
-      default: null,
-    },
-    noBtn: {
-      type: String,
-      default: null,
-    },
-    centerAlign: null,
-  },
+defineOptions({ name: 'TopsterCard' });
+const props = defineProps({
+  topster: {},
+  noPost: String,
+  noBtn: String,
+  centerAlign: null,
+});
 
-  data() {
-    return {
-      isModalOpen: false,
-      album: null,
-      likes: null,
-    };
-  },
+const store = useStore();
 
-  created() {
-    axios.get(`topsters/${this.topster.id}/like-count/status`)
-    .then((res) => {
-      this.likes = res.data;
+const isModalOpen = ref(false);
+const album = ref({});
+const likes = ref();
+
+const handleCardClicked = (clickAlbum) => {
+  album.value = clickAlbum;
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
+const formatDate = (dateTimeString) => {
+  const options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+  };
+  return new Date(dateTimeString).toLocaleDateString(undefined, options);
+};
+
+const deleteTopster = () => {
+  axios
+    .delete(`/topsters/${props.topster.id}`)
+    .then(() => {
+      alert('삭제 성공');
+      window.location.reload();
     })
-  },
+    .catch((err) => {
+      alert(err.response.message);
+    });
+};
 
-  computed: {
-    store() {
-      return store
-    },
-    reversAlbums() {
-      return this.topster.albums.slice().reverse();
-    }
-  },
-  methods: {
-    handleCardClicked(album) {
-      this.album = album;
-      this.isModalOpen = true;
-      // API 호출로 앨범 정보 가져오기 ( topster.album안에는 id, image만 갖고 id를 통해 api를 호출한다는 가정하에 한 것임)
-      // axios.get(`/album/${id}`)
-      // .then(response => {
-      //   this.albums = response.data;
-      //   this.isModalOpen = true; // 모달 열기
-      // })
-      // .catch(error => {
-      //   console.error("앨범 정보를 불러오는 중 오류 발생:", error);
-      // });
-    },
-    closeModal() {
-      this.isModalOpen = false; // 모달 닫기
-    },
+const reloadLike = () => {
+  axios.get(`topsters/${props.topster.id}/like-count/status`).then((res) => {
+    likes.value = res.data;
+  });
+};
 
-    formatDate(dateTimeString) {
-      const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      };
-      return new Date(dateTimeString).toLocaleDateString(undefined, options);
-    },
-
-    deleteTopster() {
-      axios.delete(`/topsters/${this.topster.id}`)
-      .then(() => {
-        alert('삭제 성공');
-        location.reload();
-      })
-      .catch((err) => {
-        alert(err.response.message);
-      })
-    },
-
-    likeTopster() {
-      axios.post(`topsters/${this.topster.id}/like`)
-      .then(() => {
-        axios.get(`topsters/${this.topster.id}/like-count/status`)
+const likeTopster = () => {
+  axios
+    .post(`topsters/${props.topster.id}/like`)
+    .then(() => {
+      axios
+        .get(`topsters/${props.topster.id}/like-count/status`)
         .then((res) => {
-          const status = res.data.status;
+          const status = res.data;
           if (status) {
             alert('좋아요');
-          }else {
+          } else {
             alert('좋아요 취소');
           }
-        })
-        this.reloadLike();
-      })
-      .catch(() => {
-        alert('좋아요 실패!');
-      })
-    },
-
-    reloadLike() {
-      axios.get(`topsters/${this.topster.id}/like-count/status`)
-      .then((res) => {
-        this.likes = res.data;
-      })
-    },
-
-    isAuthor() {
-      axios.get(`/topsters/${this.topster.id}/isAuthor`).then(() => {
-        router.push({name: 'postRegister', params: {topsterId: this.topster.id}})
-      }).catch(() => {
-        alert('본인의 탑스터가 아닙니다.');
-      })
-    }
-
-  },
+        });
+      reloadLike();
+    })
+    .catch(() => {
+      alert('좋아요 실패!');
+    });
 };
+
+const isAuthor = () => {
+  axios
+    .get(`/topsters/${props.topster.id}/isAuthor`)
+    .then(() => {
+      router.push({
+        name: 'postRegister',
+        params: { topsterId: props.topster.id },
+      });
+    })
+    .catch(() => {
+      alert('본인의 탑스터가 아닙니다.');
+    });
+};
+
+// const reversAlbums = computed(() => {
+//   return props.topster.albums.slice().reverse();
+// });
+
+onMounted(() => {
+  axios.get(`topsters/${props.topster.id}/like-count/status`).then((res) => {
+    likes.value = res.data;
+  });
+});
 </script>
 
 <style scoped>
