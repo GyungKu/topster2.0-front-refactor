@@ -1,12 +1,12 @@
 <template>
-  <Header />
+  <AppHeader />
   <RouterView />
-  <Footer />
+  <AppFooter />
 </template>
 
 <script setup>
-import Footer from './components/Footer.vue';
-import Header from './components/Header.vue';
+import AppFooter from './components/Footer.vue';
+import AppHeader from './components/Header.vue';
 
 defineOptions({ name: 'App' });
 </script>

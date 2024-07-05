@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-defineOptions({ name: 'CustomFooter' });
+defineOptions({ name: 'AppFooter' });
 const githubProfiles = [
   {
     url: 'https://github.com/GyungKu/topster2.0',

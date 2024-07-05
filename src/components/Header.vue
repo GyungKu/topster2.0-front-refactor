@@ -125,7 +125,7 @@
 <script setup>
 import { useStore } from 'vuex';
 
-defineOptions({ name: 'CustomHeader' });
+defineOptions({ name: 'AppHeader' });
 
 const store = useStore();
 
